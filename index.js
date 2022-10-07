@@ -13,25 +13,21 @@ class Inventario {
   }
   
   buscarProducto(codigoProducto) {
+    let producto = false;
     let ini = 0;
     let fin = this._productos.length -1;
-
-    while (ini <= fin) {
-      let mid = Math.floor((ini + fin) / 2);
-      let element = this._productos[mid];
-
-      if (element.codigo == codigoProducto) {
-        return this.productosInverso[mid];
-      }
-
-      if(element.codigo > codigoProducto) {
-        fin = mid -1;
-      } else {
-        ini = mid +1;
-        return element;
-      }
+    let mid = Math.floor((ini + fin) / 2);
+    while(ini <= fin) {
+      if (Number(this._productos[mid].codigo) === Number(codigoProducto)) {
+        producto = this._productos[mid];
+        break
+      }else if (Number(this._productos[mid].codigo) < Number(codigoProducto)) {
+        ini = mid + 1;
+      } else
+      fin = mid -1;
+      mid = Math.floor((ini + fin) / 2);
     }
-    return null;
+    return producto;
   }
 
   // index(codigoProducto) {
@@ -44,11 +40,14 @@ class Inventario {
   // }
 
   agregarProducto(producto) {
+    console.log(2222);
     if (this.buscarProducto(producto.codigo)) {
       return false;
     } else {
       this._productos.push(producto);
       this.#ordenador();
+      console.log(this.listado());
+      console.log(this.listadoInverso());
       return true;
     }
   }
@@ -88,6 +87,7 @@ class Inventario {
     if (this._productos.length > 0) {
       for (let i = 0; i < this._productos.length; i++) {
         const element = this._productos[i];
+        console.log(element);
         string += this._productos[i] + `\ncodigo: ${element.codigo}\nnombre: ${element.nombre}\ncosto: ${element.cantidad}\ncosto: ${element.costo}\n`;
       } 
     } else {
@@ -100,6 +100,7 @@ class Inventario {
     let string = '';
     if (this._productos.length > 0) {
       for (let i = this._productos.length -1; i >= 0; i--){
+        const element = this._productos[i];
         string += this._productos[i] + `\ncodigo: ${element.codigo}\nnombre: ${element.nombre}\ncosto: ${element.cantidad}\ncosto: ${element.costo}\n`;
       }
     } else {
@@ -147,7 +148,8 @@ targetaBusqueda.remove();
 btnAgregar.addEventListener('click', function (e) {
   e.preventDefault();
   const existente = inventario.buscarProducto(parseInt(agregarInpCodigo.value));
-
+  
+  console.log(existente);
   if (!existente) {
     const productoNuevo = new Producto(agregarInpCodigo.value, agregarInpNombre.value, agregarInpCantidad.value, agregarInpCosto.value);
 
@@ -161,8 +163,8 @@ let codigo = 0;
 btnBuscar.addEventListener('click', function (e) {
   e.preventDefault();
   codigo = inpBuscar.value;
-  console.log(inventario.listado());
-  console.log(inventario.listadoInverso());
+  // console.log(inventario.listado());
+  // console.log(inventario.listadoInverso());
   const producto = inventario.buscarProducto(codigo);
 
   if (producto) {
@@ -199,6 +201,7 @@ btnModoAgregar.addEventListener("click", function (e) {
 });
 
 function crearFilaDeTabla(accion, codigo, nombre) {
+  
   const tRow = document.createElement('tr');
   const accionTDate = document.createElement('td');
   const codigoTDate = document.createElement('td');
@@ -214,4 +217,3 @@ function crearFilaDeTabla(accion, codigo, nombre) {
 
   tabla.prepend(tRow);
 }
-
